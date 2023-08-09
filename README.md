@@ -11,6 +11,16 @@ mkdir client
 
 ```
 
+## Instalar e iniciar Redis en Docker
+```bash
+# instalar iniciar contenedor
+docker run -d --name redis-stack -p 6379:6379 -p 8001:8001 redis/redis-stack:latest
+# Visitar puerto 8001
+http://localhost:8001/redis-stack/browser
+```
+
+
+
 ## Iniciar backend - golang
 ```bash
 # Correr en la carpeta del proyecto
