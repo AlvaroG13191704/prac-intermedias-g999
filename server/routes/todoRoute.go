@@ -9,6 +9,13 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
+// say hello
+func Hello(c *fiber.Ctx) error {
+	return c.JSON(fiber.Map{
+		"message": "Hello, World!",
+	})
+}
+
 // GetTodos is a function that returns all the todos in the database
 func GetTodos(client *redis.Client) fiber.Handler {
 	return func(c *fiber.Ctx) error {
@@ -48,7 +55,13 @@ func CreateTodo(client *redis.Client) fiber.Handler {
 		todo := new(model.Todo)
 
 		if err := c.BodyParser(todo); err != nil {
+			// log.Printf("Error parsing body: %v", err)
 			return c.Status(400).SendString(err.Error())
+		}
+		// validate the todo
+		errors := ValidateStructTodo(*todo)
+		if len(errors) > 0 {
+			return c.Status(400).JSON(errors)
 		}
 
 		// marshal todo into a JSON string
@@ -57,7 +70,8 @@ func CreateTodo(client *redis.Client) fiber.Handler {
 		// set the key-value pair in the database
 		err := client.Set(ctx, todo.ID, todoJSON, 0).Err()
 		if err != nil {
-			panic(err)
+			// log.Printf("Error setting key-value pair: %v", err)
+			return c.Status(500).SendString(err.Error())
 		}
 
 		// return status 201 Created and id of the todo
@@ -78,13 +92,19 @@ func UpdateTodo(client *redis.Client) fiber.Handler {
 			return c.Status(400).SendString(err.Error())
 		}
 
+		// validate the todo
+		errors := ValidateStructTodo(*todo)
+		if len(errors) > 0 {
+			return c.Status(400).JSON(errors)
+		}
+
 		// marshal todo into a JSON string
 		todoJSON, _ := json.Marshal(todo)
 
 		// update the key-value pair in the database
 		err := client.Set(ctx, id, todoJSON, 0).Err()
 		if err != nil {
-			panic(err)
+			return c.Status(500).SendString(err.Error())
 		}
 
 		// return status 200 OK and the todo
@@ -103,7 +123,8 @@ func DeleteTodo(client *redis.Client) fiber.Handler {
 		// delete the key-value pair in the database
 		err := client.Del(ctx, id).Err()
 		if err != nil {
-			panic(err)
+			// fmt.Println(err)
+			return c.Status(500).SendString(err.Error())
 		}
 
 		// return status 200 OK and the todo

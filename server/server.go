@@ -17,15 +17,8 @@ func main() {
 
 	app := fiber.New()
 
-	// app.Get("/", func(c *fiber.Ctx) error {
-	// 	err := client.Set(ctx, "foo", "bar", 0).Err()
-	// 	if err != nil {
-	// 		panic(err)
-	// 	}
-	// 	return c.SendString("Hello, World!")
-	// })
-
 	// route
+	app.Get("/", routes.Hello)
 	app.Get("/todos", routes.GetTodos(client))
 	app.Post("/todos", routes.CreateTodo(client))
 	app.Put("/todos/:id", routes.UpdateTodo(client))
