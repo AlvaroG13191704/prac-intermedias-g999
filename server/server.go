@@ -1,18 +1,27 @@
 package main
 
 import (
+	"log"
+	"os"
 	"server/api-go-test/routes"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/joho/godotenv"
 	"github.com/redis/go-redis/v9"
 )
 
 func main() {
 
+	// load env
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	client := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Password: "", // no password set
-		DB:       0,  // use default DB
+		Addr:     os.Getenv("REDIS_HOST"),
+		Password: os.Getenv("REDIS_PASS"), // no password set
+		DB:       0,                       // use default DB
 	})
 
 	app := fiber.New()

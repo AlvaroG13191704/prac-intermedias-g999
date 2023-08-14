@@ -1,7 +1,7 @@
 import { fail } from "@sveltejs/kit";
 import type { Todo } from "../../routes/interface";
 
-async function request(endpoint: string, method: string, body: string) {
+async function request(endpoint: string, method: string, body: string = "") {
   return await fetch(endpoint, {
     method,
     headers: {
@@ -12,9 +12,14 @@ async function request(endpoint: string, method: string, body: string) {
 }
 
 export async function getTodos() {
-  const res = await fetch("http:///127.0.0.1:3000/todos")
+  const res = await fetch("http:///127.0.0.1:3000/todos",{
+    method: 'GET',
+  })
 
-  if (res.status !== 200) return fail(res.status)
+  if (res.status !== 200) {
+    console.log(res.status)
+    return null
+  }
 
   const data = await res.json()
 
@@ -40,7 +45,11 @@ export async function addTodo(todo: Todo) {
 }
 
 export async function updateTodo(id: any, todo: Todo) {
-  const res = await request("http://127.0.0.1:3000/todos/" + id, 'UPDATE', JSON.stringify(todo))
+
+
+  const url = "http://127.0.0.1:3000/todos/"+id
+  
+  const res = await request(url, 'PUT', JSON.stringify(todo))
 
   if (res.status !== 200) return {
     status: res.status,
@@ -52,4 +61,22 @@ export async function updateTodo(id: any, todo: Todo) {
     status: res.status,
     id: response.id
   }
+}
+
+export async function deleteTodo(id: any) {
+  const url = "http://127.0.0.1:3000/todos/"+id
+
+  const res = await fetch(url, {
+    method: 'DELETE',
+  })
+
+  if (res.status !== 200) return {
+    status: res.status,
+    id: null
+  }
+
+  const response = await res.json()
+
+  console.log(response);
+  return response
 }

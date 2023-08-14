@@ -3,7 +3,6 @@
 	import TodoItem from "./components/TodoItem.svelte";
 
   export let data;
-  $:console.log(data);
 </script>
 
 
@@ -14,12 +13,12 @@
 
 
 <!-- Createa container -->
-<div class="px-20 bg-slate-300 ">
+<div class="px-20 bg-slate-300 full-height">
   <!-- ... -->
-  <p class="font-mono text-4xl pt-16"  >Practicas intermedias - Grupo 999</p>
-  <p class="font-mono text-3xl" >Github actions</p>
-  <p class="font-mono text-2xl pb-36" >ToDo List - Svelte + REST API Go</p>
-
+  <p class="font-mono text-4xl pt-16 pb-5"  >Practicas intermedias - Grupo 999</p>
+  <p class="font-mono text-3xl pb-5" >Github actions</p>
+  <p class="font-mono text-2xl pb-10" >ToDo List - Svelte + REST API Go + Testing</p>
+  <hr class="w-full border-2 border-gray-500 mb-4" />
   <div  class="flex items-start justify-between">
     <p class="font-mono text-2xl " >Agrega un elemento a la lista</p>
     <p class="font-mono text-2xl " >Lista de tareas pendientes:</p>
@@ -28,11 +27,13 @@
     <div >
         <TodoForm />
     </div>
-    <div class="flex flex-col ">
-      <!-- Lista -->
+    <div class="flex flex-col  ">
+      <!-- List -->
       <div class="grow w-full">
         {#each data.todos as todo (todo.id)}
+        {#if !todo.completed}
         <TodoItem {...todo} />
+        {/if}
         {/each}
       </div>
       <!-- Line of todos done -->
@@ -40,12 +41,18 @@
       <!-- Lista de completados -->
       <div class="grow w-full">
         <p class="text-right pt-2 font-mono text-2xl " >Lista de tareas completadas:</p>
-        <!-- {#each data.todos as todo (todo.id)}
+        {#each data.todos as todo (todo.id)}
         {#if todo.completed}
         <TodoItem {...todo} />
         {/if}
-        {/each} -->
+        {/each}
       </div>
     </div>
   </div>
 </div>
+
+<style>
+  .full-height {
+    height: 100vh;
+  }
+</style>

@@ -23,13 +23,13 @@ func GetTodos(client *redis.Client) fiber.Handler {
 		// get all the keys in the database
 		keys, err := client.Keys(ctx, "*").Result()
 		if err != nil {
-			panic(err)
+			return c.Status(500).SendString(err.Error())
 		}
 
 		// get all the values in the database
 		values, err := client.MGet(ctx, keys...).Result()
 		if err != nil {
-			panic(err)
+			return c.Status(500).SendString(err.Error())
 		}
 
 		// create a slice of todos
